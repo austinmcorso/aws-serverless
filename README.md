@@ -37,3 +37,18 @@ and an example progressive loading experience.
 - If the user visits the page before all of the images are generated, they should
 see an "In-progress" indicator.
 
+## What we're building
+
+We want to demonstrate best practices in two areas:
+
+- Handler (Lambda) development
+- Deployment of backing infrastructure
+
+In order to do this, we will need the following components:
+
+- A lambda for uploading the original image, placing it in S3, and returning an id
+- An SQS queue for holding the resizing jobs after the original upload
+- A lambda for resizing an image
+- A static page in S3 for viewing image details, given an id
+
+Using multiple components in the AWS ecosystem should provide us with opportunity to explore the differences in using Terraform or Cloudformation against specialized frameworks like Serverless or Apex. Having multiple Lambdas should also expose the variation and testing challenges when integrating with AWS services.
