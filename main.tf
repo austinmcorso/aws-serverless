@@ -77,6 +77,19 @@ resource "aws_api_gateway_integration" "upload_post_integration" {
   integration_http_method = "${aws_api_gateway_method.upload_post.http_method}"
   uri = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${aws_lambda_function.upload.arn}/invocations"
 }
+resource "aws_api_gateway_method_response" "200" {
+  rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
+  resource_id = "${aws_api_gateway_resource.upload.id}"
+  http_method = "${aws_api_gateway_method.upload_post.http_method}"
+  status_code = "200"
+}
+resource "aws_api_gateway_integration_response" "generator_integration_response" {
+  rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
+  resource_id = "${aws_api_gateway_resource.upload.id}"
+  http_method = "${aws_api_gateway_method.upload_post.http_method}"
+  status_code = "${aws_api_gateway_method_response.200.status_code}"
+  depends_on = ["aws_api_gateway_integration.upload_post_integration"]
+}
 resource "aws_api_gateway_deployment" "production" {
   rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
   stage_name = "prod"
