@@ -66,7 +66,7 @@ resource "aws_lambda_function" "upload_image_lambda_function" {
 }
 
 resource "aws_lambda_function" "process_image_lambda_function" {
-  filename = "lambdas/process_image/process_image_lambda_function.zip"
+  filename = "lambdas/process_image/process_image.zip"
   function_name = "process_image"
   role = "${aws_iam_role.lambda_role.arn}"
   handler = "index.handler"

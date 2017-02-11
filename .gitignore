@@ -1,2 +1,4 @@
+node_modules
+*.log
 terraform.tfvars
 terraform.tfstate*

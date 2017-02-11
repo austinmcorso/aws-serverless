@@ -1,0 +1,27 @@
+{
+  "dependencies": {
+    "async": "^2.1.4",
+    "aws-sdk": "^2.12.0",
+    "eslint": "^3.15.0",
+    "gm": "^1.23.0",
+    "uuid": "^3.0.1"
+  },
+  "name": "aws-serverless",
+  "description": "## Why?",
+  "version": "0.0.1",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/austinmcorso/aws-serverless.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/austinmcorso/aws-serverless/issues"
+  },
+  "homepage": "https://github.com/austinmcorso/aws-serverless#readme"
+}
