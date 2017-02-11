@@ -44,13 +44,6 @@ resource "aws_lambda_function" "process_image" {
   runtime = "nodejs4.3"
   source_code_hash = "${base64sha256(file("./lambdas/process_image/process_image.zip"))}"
 }
-/*resource "aws_lambda_permission" "allow_bucket" {
-    statement_id = "AllowExecutionFromS3Bucket"
-    action = "lambda:InvokeFunction"
-    function_name = "${aws_lambda_function.func.arn}"
-    principal = "s3.amazonaws.com"
-    source_arn = "${aws_s3_bucket.bucket.arn}"
-}*/
 
 # API GATEWAY
 resource "aws_api_gateway_rest_api" "mipmapper_api" {
@@ -109,6 +102,13 @@ resource "aws_s3_bucket" "client" {
     website {
         index_document = "index.html"
     }
+}
+resource "aws_lambda_permission" "allow_s3" {
+    statement_id = "AllowExecutionFromS3Bucket"
+    action = "lambda:InvokeFunction"
+    function_name = "${aws_lambda_function.process_image.arn}"
+    principal = "s3.amazonaws.com"
+    source_arn = "${aws_s3_bucket.client.arn}"
 }
 resource "aws_s3_bucket_notification" "upload" {
     bucket = "${aws_s3_bucket.client.id}"
