@@ -136,3 +136,18 @@ resource "aws_s3_bucket" "client" {
         index_document = "index.html"
     }
 }
+resource "aws_lambda_permission" "allow_s3" {
+    statement_id = "AllowExecutionFromS3Bucket"
+    action = "lambda:InvokeFunction"
+    function_name = "${aws_lambda_function.process_image.arn}"
+    principal = "s3.amazonaws.com"
+    source_arn = "${aws_s3_bucket.client.arn}"
+}
+resource "aws_s3_bucket_notification" "upload" {
+    bucket = "${aws_s3_bucket.client.id}"
+    lambda_function {
+        lambda_function_arn = "${aws_lambda_function.process_image.arn}"
+        events = ["s3:ObjectCreated:*"]
+        filter_prefix = "uploads/"
+    }
+}
