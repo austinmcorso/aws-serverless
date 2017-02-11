@@ -5,8 +5,8 @@ provider "aws" {
 }
 
 # IAM
-resource "aws_iam_role" "lambda_upload" {
-    name = "lambda_upload"
+resource "aws_iam_role" "lambda" {
+    name = "lambda"
     assume_role_policy = <<EOF
 {
   "Statement": [
@@ -22,13 +22,8 @@ resource "aws_iam_role" "lambda_upload" {
 }
 EOF
 }
-/*
-resource "aws_iam_role" "lambda_optimize_image" {
-    name = "lambda_optimize_image"
-}
-*/
-resource "aws_iam_role_policy_attachment" "lambda_upload" {
-    role = "${aws_iam_role.lambda_upload.name}"
+resource "aws_iam_role_policy_attachment" "lambda" {
+    role = "${aws_iam_role.lambda.name}"
     policy_arn = "arn:aws:iam::aws:policy/AWSLambdaExecute"
 }
 
@@ -36,32 +31,35 @@ resource "aws_iam_role_policy_attachment" "lambda_upload" {
 resource "aws_lambda_function" "upload" {
   filename = "lambdas/upload/upload.zip"
   function_name = "upload"
-  role = "${aws_iam_role.lambda_upload.arn}"
+  role = "${aws_iam_role.lambda.arn}"
   handler = "index.handler"
   runtime = "nodejs4.3"
   source_code_hash = "${base64sha256(file("lambdas/upload/upload.zip"))}"
 }
-/*
-resource "aws_lambda_function" "optimize_image" {
-  filename = "optimize_image.zip"
-  function_name = "upload"
-  role = "${aws_iam_role.lambda_optimize_image.arn}"
+resource "aws_lambda_function" "process_image" {
+  filename = "lambdas/process_image/process_image.zip"
+  function_name = "process_image"
+  role = "${aws_iam_role.lambda.arn}"
   handler = "index.handler"
   runtime = "nodejs4.3"
-  source_code_hash = "${base64sha256(file("./lambdas/optimize_image.zip"))}"
+  source_code_hash = "${base64sha256(file("./lambdas/process_image/process_image.zip"))}"
 }
-*/
 
 # API GATEWAY
 resource "aws_api_gateway_rest_api" "mipmapper_api" {
   name = "mipmapper_api"
   description = "API for Mipmapper"
-  depends_on = ["aws_lambda_function.upload"]
+  depends_on = ["aws_lambda_function.upload", "aws_lambda_function.process_image"]
 }
 resource "aws_api_gateway_resource" "upload" {
   rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
   parent_id = "${aws_api_gateway_rest_api.mipmapper_api.root_resource_id}"
   path_part = "upload"
+}
+resource "aws_api_gateway_resource" "process_image" {
+  rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
+  parent_id = "${aws_api_gateway_rest_api.mipmapper_api.root_resource_id}"
+  path_part = "process"
 }
 resource "aws_api_gateway_method" "upload_post" {
   rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
