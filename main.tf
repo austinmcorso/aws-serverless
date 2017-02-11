@@ -22,6 +22,26 @@ resource "aws_iam_role" "lambda_upload" {
 }
 EOF
 }
+
+resource "aws_iam_policy" "lambda_upload_store_upload" {
+    name = "test_policy"
+    path = "/"
+    description = "My test policy"
+    policy = <<EOF
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Action": [
+        "s3:PutObject"
+      ],
+      "Effect": "Allow",
+      "Resource": "${aws_s3_bucket.client.arn}"
+    }
+  ]
+}
+EOF
+}
 /*
 resource "aws_iam_role" "lambda_optimize_image" {
     name = "lambda_optimize_image"
@@ -100,6 +120,7 @@ resource "aws_api_gateway_deployment" "production" {
 resource "aws_s3_bucket" "client" {
     bucket = "${var.aws_s3_bucket_name}"
     acl = "public-read"
+
 
     website {
         index_document = "index.html"
