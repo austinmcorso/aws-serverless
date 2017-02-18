@@ -59,7 +59,7 @@ module.exports = function processImage(event, context, callback) {
         const height = scalingFactor * size.height;
 
         // Transform the image buffer in memory.
-        this.resize(width, height).toBuffer(imageType, (thisErr, buffer) => {
+        gm(response.Body).resize(width, height).toBuffer(imageType, (thisErr, buffer) => {
           if (thisErr) {
             next(thisErr);
           } else {
