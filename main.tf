@@ -57,21 +57,21 @@ resource "aws_iam_role_policy_attachment" "lambda_s3_policy_attachment" {
 
 # LAMDA
 resource "aws_lambda_function" "upload_image_lambda_function" {
-  filename = "lambdas/upload/upload.zip"
+  filename = "mipmapper.zip"
   function_name = "upload_image"
   role = "${aws_iam_role.lambda_role.arn}"
-  handler = "index.handler"
+  handler = "index.upload"
   runtime = "nodejs4.3"
-  source_code_hash = "${base64sha256(file("lambdas/upload/upload.zip"))}"
+  source_code_hash = "${base64sha256(file("./mipmapper.zip"))}"
 }
 
 resource "aws_lambda_function" "process_image_lambda_function" {
-  filename = "lambdas/process_image/process_image.zip"
+  filename = "mipmapper.zip"
   function_name = "process_image"
   role = "${aws_iam_role.lambda_role.arn}"
-  handler = "index.handler"
+  handler = "index.processImage"
   runtime = "nodejs4.3"
-  source_code_hash = "${base64sha256(file("./lambdas/process_image/process_image.zip"))}"
+  source_code_hash = "${base64sha256(file("./mipmapper.zip"))}"
 }
 
 # API GATEWAY

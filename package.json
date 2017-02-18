@@ -17,9 +17,7 @@
     "eslint-plugin-react": "^6.9.0"
   },
   "scripts": {
-    "build": "yarn run build-process-image & yarn run build-upload",
-    "build-process-image": "zip ./lambdas/process_image/process_image.zip ./lambdas/process_image/index.js",
-    "build-upload": "zip ./lambdas/upload/upload.zip ./lambdas/upload/index.js"
+    "build": "yarn install && ./scripts/build.sh"
   },
   "repository": {
     "type": "git",
