@@ -5,7 +5,7 @@ const uuid = require('uuid/v4');
 const S3_BUCKET_NAME = 'mipmapper';
 const S3_FOLDER_PREFIX = 'uploads';
 const jsonResponse = (statusCode, body) => ({
-  statusCode: statusCode,
+  statusCode,
   body: JSON.stringify(body),
   headers: {
     'Content-Type': 'application/json',
@@ -18,22 +18,28 @@ function getValidationErrors(event) {
   return [];
 }
 
-function doUpload(contents, id, callback) {
+function doUpload(imageType, imageContents, id, callback) {
   const s3 = new AWS.S3Client();
-  const filename = path.join(S3_FOLDER_PREFIX, id) + path.extension();
+  const filename = `${path.join(S3_FOLDER_PREFIX, id)}.${imageType}`;
   s3.putObject({
     Bucket: S3_BUCKET_NAME,
     Key: path.join(S3_FOLDER_PREFIX, filename),
-    Body: contents,
+    Body: imageContents,
   }, callback);
 }
 
 module.exports = (event, context, callback) => {
   const errors = getValidationErrors(event);
   if (errors.length > 0) {
-    callback(null, jsonResponse(400, { errors: errors }));
+    callback(null, jsonResponse(400, { errors }));
   }
 
   const id = uuid();
-  doUpload(event.payload, id, () => jsonResponse(200, { id: id }));
+  doUpload(event.payload.imageType, event.payload.base64Image, id, (err) => {
+    if (err) {
+      throw err;
+    }
+
+    jsonResponse(200, { id });
+  });
 };

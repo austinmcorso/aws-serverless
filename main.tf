@@ -82,6 +82,10 @@ resource "aws_api_gateway_rest_api" "mipmapper_api" {
     "aws_lambda_function.upload_image_lambda_function",
     "aws_lambda_function.process_image_lambda_function"
   ]
+  binary_media_types = [
+    "image/png",
+    "image/jpeg"
+  ]
 }
 
 resource "aws_api_gateway_resource" "upload_image_api_gateway_resource" {
@@ -104,6 +108,15 @@ resource "aws_api_gateway_integration" "upload_image_api_gateway_integration" {
   type = "AWS"
   integration_http_method = "${aws_api_gateway_method.upload_image_api_gateway_method.http_method}"
   uri = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${aws_lambda_function.upload_image_lambda_function.arn}/invocations"
+
+  request_templates {
+   "image/png" = <<EOF
+{
+  "imageType": "png",
+  "base64Image" : $input.body
+}
+EOF
+ }
 }
 
 resource "aws_api_gateway_method_response" "200" {
