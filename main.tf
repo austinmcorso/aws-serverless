@@ -113,7 +113,19 @@ resource "aws_api_gateway_integration" "upload_image_api_gateway_integration" {
    "image/png" = <<EOF
 {
   "imageType": "png",
-  "base64Image" : $input.body
+  "base64Image" : "$input.body"
+}
+EOF
+  "image/jpeg" = <<EOF
+{
+  "imageType": "jpg",
+  "base64Image" : "$input.body"
+}
+EOF
+  "image/jpg" = <<EOF
+{
+  "imageType": "jpg",
+  "base64Image" : "$input.body"
 }
 EOF
  }
@@ -131,6 +143,16 @@ resource "aws_api_gateway_integration_response" "upload_image_api_gateway_integr
   http_method = "${aws_api_gateway_method.upload_image_api_gateway_method.http_method}"
   status_code = "${aws_api_gateway_method_response.200.status_code}"
   depends_on = ["aws_api_gateway_integration.upload_image_api_gateway_integration"]
+
+  response_templates {
+    "application/xml" = <<EOF
+#set($inputRoot = $input.path('$'))
+<?xml version="1.0" encoding="UTF-8"?>
+<message>
+    $inputRoot.body
+</message>
+EOF
+  }
 }
 
 resource "aws_api_gateway_deployment" "production" {
