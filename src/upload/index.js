@@ -16,7 +16,7 @@ function doUpload(imageType, imageContents, id, callback) {
   const filename = `${path.join(S3_FOLDER_PREFIX, id)}.${imageType}`;
   s3.putObject({
     Bucket: S3_BUCKET_NAME,
-    Key: path.join(S3_FOLDER_PREFIX, filename),
+    Key: filename,
     Body: imageContents,
   }, callback);
 }
