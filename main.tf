@@ -84,7 +84,8 @@ resource "aws_api_gateway_rest_api" "mipmapper_api" {
   ]
   binary_media_types = [
     "image/png",
-    "image/jpeg"
+    "image/jpeg",
+    "image/jpg"
   ]
 }
 
@@ -107,7 +108,7 @@ resource "aws_api_gateway_integration" "upload_image_api_gateway_integration" {
   http_method = "${aws_api_gateway_method.upload_image_api_gateway_method.http_method}"
   type = "AWS"
   integration_http_method = "${aws_api_gateway_method.upload_image_api_gateway_method.http_method}"
-  uri = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${aws_lambda_function.upload_image_lambda_function.arn}/invocations"
+  uri = "https://lambda.${var.aws_region}.amazonaws.com/2015-03-31/functions/${aws_lambda_function.upload_image_lambda_function.arn}/invocations"
 
   request_templates {
    "image/png" = <<EOF
@@ -143,16 +144,6 @@ resource "aws_api_gateway_integration_response" "upload_image_api_gateway_integr
   http_method = "${aws_api_gateway_method.upload_image_api_gateway_method.http_method}"
   status_code = "${aws_api_gateway_method_response.200.status_code}"
   depends_on = ["aws_api_gateway_integration.upload_image_api_gateway_integration"]
-
-  response_templates {
-    "application/xml" = <<EOF
-#set($inputRoot = $input.path('$'))
-<?xml version="1.0" encoding="UTF-8"?>
-<message>
-    $inputRoot.body
-</message>
-EOF
-  }
 }
 
 resource "aws_api_gateway_deployment" "production" {
