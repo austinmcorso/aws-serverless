@@ -106,7 +106,7 @@ resource "aws_api_gateway_integration" "upload_image_api_gateway_integration" {
   rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
   resource_id = "${aws_api_gateway_resource.upload_image_api_gateway_resource.id}"
   http_method = "${aws_api_gateway_method.upload_image_api_gateway_method.http_method}"
-  type = "AWS"
+  type = "HTTP"
   integration_http_method = "${aws_api_gateway_method.upload_image_api_gateway_method.http_method}"
   uri = "https://lambda.${var.aws_region}.amazonaws.com/2015-03-31/functions/${aws_lambda_function.upload_image_lambda_function.arn}/invocations"
 
