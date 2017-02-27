@@ -172,9 +172,8 @@ resource "aws_lambda_permission" "allow_s3" {
 resource "aws_lambda_permission" "apigw_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = "${aws_lambda_function.upload_image_lambda_function.arn}"
+  function_name = "${aws_lambda_function.upload_image_lambda_function.name}"
   principal     = "apigateway.amazonaws.com"
-  source_arn    = "arn:aws:execute-api:${var.aws_region}:${var.account_id}:${aws_api_gateway_rest_api.mipmapper_api.id}/*/${aws_api_gateway_method.upload_image_api_gateway_method.http_method}/upload"
 }
 resource "aws_s3_bucket_notification" "upload" {
     bucket = "${aws_s3_bucket.client.id}"
