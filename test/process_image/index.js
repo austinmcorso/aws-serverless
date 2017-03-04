@@ -4,14 +4,20 @@
 const fs = require('fs');
 const assert = require('assert');
 const proxyquire = require('proxyquire');
-const sinon = require('sinon');
+
+const file = fs.readFileSync('./test/data/test_image.jpg');
+function s3Stub() {
+  return {
+    getObject: (obj, cb) => cb(null, { Body: file }),
+    putObject: (obj, cb) => {
+      fs.writeFileSync('./test/data/test_image_resized.jpg', obj.Body);
+      return cb();
+    },
+  };
+}
 
 describe('Process Image', () => {
-  const file = fs.readFileSync('./test/data/test_image.jpg');
-  const awsStub = () => ({
-    getObject: () => ({ Body: file }),
-    putObject: () => {},
-  });
+  const awsStub = { S3: s3Stub };
   const { transform, processImage } = proxyquire('../../src/process_image', {
     'aws-sdk': awsStub,
   });
@@ -29,6 +35,22 @@ describe('Process Image', () => {
     transform(metaData, s3Object, (err, m, s, b) => {
       assert.strictEqual(err, null);
       assert.strictEqual(b instanceof Buffer, true);
+      done();
+    });
+  });
+
+  it('should process image', (done) => {
+    const event = {
+      Records: [{
+        s3: {
+          bucket: { name: 'bucket' },
+          object: { key: 'test_image.jpg' },
+        },
+      }],
+    };
+    processImage(event, null, (err, res) => {
+      assert.strictEqual(err, null);
+      assert.strictEqual(res.statusCode, '200');
       done();
     });
   });
