@@ -172,7 +172,7 @@ resource "aws_lambda_permission" "allow_s3" {
 resource "aws_lambda_permission" "apigw_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = "${aws_lambda_function.upload_image_lambda_function.name}"
+  function_name = "${aws_lambda_function.upload_image_lambda_function.function_name}"
   principal     = "apigateway.amazonaws.com"
 }
 resource "aws_s3_bucket_notification" "upload" {
