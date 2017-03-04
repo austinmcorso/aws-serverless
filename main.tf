@@ -109,6 +109,8 @@ resource "aws_api_gateway_integration" "upload_image_api_gateway_integration" {
   type = "AWS"
   integration_http_method = "${aws_api_gateway_method.upload_image_api_gateway_method.http_method}"
   uri = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${aws_lambda_function.upload_image_lambda_function.arn}/invocations"
+  passthrough_behavior = "WHEN_NO_TEMPLATES"
+  content_handling = "CONVERT_TO_TEXT"
 
   request_templates {
    "image/png" = <<EOF
@@ -156,7 +158,6 @@ resource "aws_api_gateway_deployment" "production" {
 resource "aws_s3_bucket" "client" {
     bucket = "${var.aws_s3_bucket_name}"
     acl = "public-read"
-
 
     website {
         index_document = "index.html"
