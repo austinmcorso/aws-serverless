@@ -71,6 +71,7 @@ resource "aws_lambda_function" "process_image_lambda_function" {
   role = "${aws_iam_role.lambda_role.arn}"
   handler = "index.processImage"
   runtime = "nodejs4.3"
+  timeout = 15
   source_code_hash = "${base64sha256(file("./mipmapper.zip"))}"
 }
 
