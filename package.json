@@ -20,7 +20,7 @@
     "sinon": "^1.17.7"
   },
   "scripts": {
-    "build": "yarn install && ./scripts/build.sh",
+    "build": "yarn test && yarn install && ./scripts/build.sh",
     "test": "mocha --recursive"
   },
   "repository": {

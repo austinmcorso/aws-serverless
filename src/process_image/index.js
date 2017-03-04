@@ -59,9 +59,9 @@ function transform(metaData, s3Object, next) {
 
 // Upload the image.
 function upload(metaData, contentType, data, next) {
-  console.log('Image upload started.');
+  console.log(`Image upload started: ${metaData.srcBucket}:${metaData.dstKey}`);
   s3.putObject({
-    Bucket: PATHS.SM,
+    Bucket: metaData.srcBucket,
     Key: metaData.dstKey,
     Body: data,
     ContentType: contentType,
@@ -84,7 +84,7 @@ function processImage(event, context, callback) {
   const srcBucket = src.bucket.name;
   const srcKey = src.object.key;
   const uuid = path.basename(srcKey);
-  const dstKey = path.join(srcBucket, PATHS.SM, uuid);
+  const dstKey = path.join(PATHS.SM, uuid);
 
   // Infer the image type.
   const typeMatch = srcKey.match(/\.([^.]*)$/);
@@ -101,6 +101,7 @@ function processImage(event, context, callback) {
     imageType,
     srcBucket,
     srcKey,
+    dstKey,
   };
 
   // Download the image from S3, transform, and upload to a different S3 bucket.
