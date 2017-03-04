@@ -6,6 +6,7 @@
       "objects": "always-multiline",
       "arrays": "always-multiline",
       "functions": "ignore"
-    }]
+    }],
+    "no-console": 0
   }
 }
