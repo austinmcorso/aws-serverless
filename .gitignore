@@ -1,6 +1,6 @@
 **/.DS_STORE
 dist
-test/data/test_image_resized.jpg
+backend/test/data/test_image_resized.jpg
 node_modules
 *.log
 terraform.tfvars
