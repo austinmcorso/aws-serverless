@@ -21,18 +21,17 @@ function doUpload(imageType, imageContents, id, callback) {
   }, callback);
 }
 
-module.exports = (event, context, callback) => {
+module.exports = (event, context, done) => {
   const errors = getValidationErrors(event);
   if (errors.length > 0) {
-    callback(new Error(`[BadRequest] Validation errors: ${errors.join(',')}`));
+    done(new Error(`[BadRequest] Validation errors: ${errors.join(',')}`));
   }
 
   const id = uuid();
-  doUpload(event.imageType, new Buffer(event.base64Image, 'base64'), id, (err) => {
-    if (err) {
-      throw err;
-    }
-
-    callback(null, { id });
-  });
+  doUpload(
+    event.imageType,
+    new Buffer(event.base64Image, 'base64'),
+    id,
+    err => done(err, { id })
+  );
 };
