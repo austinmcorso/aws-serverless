@@ -18,9 +18,12 @@ function s3Stub() {
 
 describe('Process Image', () => {
   const awsStub = { S3: s3Stub };
-  const { transform, processImage } = proxyquire('../../src/process_image', {
+  const handler = proxyquire('../../src/process_image', {
     'aws-sdk': awsStub,
   });
+
+  const processImage = handler.processImage;
+  const transform = handler.transform;
 
   it('should transform image', (done) => {
     const metaData = {
