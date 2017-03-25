@@ -4,7 +4,7 @@
   "description": "Image resizer",
   "main": "index.js",
   "scripts": {
-    "serve": "webpack-dev-server --inline --history-api-fallback",
+    "serve": "webpack-dev-server --inline --history-api-fallback --content-base src/",
     "build": "webpack"
   },
   "dependencies": {

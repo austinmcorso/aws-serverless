@@ -6,6 +6,8 @@
 
   More info: https://github.com/ReactiveX/rxjs#installation-and-usage
  */
+ console.log('test');
+
 import 'rxjs';
 import React from 'react';
 import ReactDOM from 'react-dom';
