@@ -4,12 +4,13 @@ const addImage = {
   addImage: (image) => {
     return {
       type: ActionTypes.ADD_IMAGE,
-      image,
+      image: image.preview,
     };
   },
-  addImageSuccess: (image) => {
+  addImageSuccess: (id) => {
     return {
       type: ActionTypes.ADD_IMAGE_SUCCESS,
+      id,
     };
   },
   addImageFail: (error) => {
