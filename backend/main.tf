@@ -103,25 +103,31 @@ resource "aws_api_gateway_rest_api" "mipmapper_api" {
   ]
 }
 
+# API GATEWAY :: RESOURCES
 resource "aws_api_gateway_resource" "upload_image_api_gateway_resource" {
   rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
   parent_id = "${aws_api_gateway_rest_api.mipmapper_api.root_resource_id}"
   path_part = "images"
 }
-
 resource "aws_api_gateway_resource" "get_upload_url_api_gateway_resource" {
   rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
   parent_id = "${aws_api_gateway_resource.upload_image_api_gateway_resource.id}"
   path_part = "v2"
 }
 
+# API GATEWAY :: REQUEST METHODS
 resource "aws_api_gateway_method" "upload_image_api_gateway_method" {
   rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
   resource_id = "${aws_api_gateway_resource.upload_image_api_gateway_resource.id}"
   http_method = "POST"
   authorization = "NONE"
 }
-
+resource "aws_api_gateway_method" "upload_image__options" {
+  rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
+  resource_id = "${aws_api_gateway_resource.upload_image_api_gateway_resource.id}"
+  http_method = "OPTIONS"
+  authorization = "NONE"
+}
 resource "aws_api_gateway_method" "get_upload_url_api_gateway_method" {
   rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
   resource_id = "${aws_api_gateway_resource.get_upload_url_api_gateway_resource.id}"
@@ -129,6 +135,7 @@ resource "aws_api_gateway_method" "get_upload_url_api_gateway_method" {
   authorization = "NONE"
 }
 
+# API GATEWAY :: REQUEST INTEGRATIONS
 resource "aws_api_gateway_integration" "upload_image_api_gateway_integration" {
   rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
   resource_id = "${aws_api_gateway_resource.upload_image_api_gateway_resource.id}"
@@ -138,7 +145,6 @@ resource "aws_api_gateway_integration" "upload_image_api_gateway_integration" {
   uri = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${aws_lambda_function.upload_image_lambda_function.arn}/invocations"
   passthrough_behavior = "WHEN_NO_TEMPLATES"
   content_handling = "CONVERT_TO_TEXT"
-
   request_templates {
    "image/png" = <<EOF
 {
@@ -160,46 +166,88 @@ EOF
 EOF
  }
 }
-
+resource "aws_api_gateway_integration" "upload_image__options" {
+  rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
+  resource_id = "${aws_api_gateway_resource.upload_image_api_gateway_resource.id}"
+  http_method = "${aws_api_gateway_method.upload_image__options.http_method}"
+  integration_http_method = "${aws_api_gateway_method.upload_image_api_gateway_method.http_method}"
+  type = "MOCK"
+  request_templates = {
+    "application/json" = <<EOF
+{ "statusCode": 200 }
+EOF
+  }
+}
 resource "aws_api_gateway_integration" "get_upload_url_api_gateway_integration" {
   rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
   resource_id = "${aws_api_gateway_resource.get_upload_url_api_gateway_resource.id}"
   http_method = "${aws_api_gateway_method.get_upload_url_api_gateway_method.http_method}"
   integration_http_method = "${aws_api_gateway_method.upload_image_api_gateway_method.http_method}"
-  type ="AWS"
+  type = "AWS"
   uri = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${aws_lambda_function.get_upload_url_lambda_function.arn}/invocations"
 }
 
-resource "aws_api_gateway_method_response" "upload_image_200" {
-  rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
-  resource_id = "${aws_api_gateway_resource.upload_image_api_gateway_resource.id}"
-  http_method = "${aws_api_gateway_method.upload_image_api_gateway_method.http_method}"
-  status_code = "200"
-}
-
-resource "aws_api_gateway_method_response" "get_upload_url_200" {
-  rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
-  resource_id = "${aws_api_gateway_resource.get_upload_url_api_gateway_resource.id}"
-  http_method = "${aws_api_gateway_method.get_upload_url_api_gateway_method.http_method}"
-  status_code = "200"
-}
-
+# API GATEWAY :: RESPONSE INTEGRATIONS
 resource "aws_api_gateway_integration_response" "upload_image_api_gateway_integration_response" {
   rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
   resource_id = "${aws_api_gateway_resource.upload_image_api_gateway_resource.id}"
   http_method = "${aws_api_gateway_method.upload_image_api_gateway_method.http_method}"
   status_code = "${aws_api_gateway_method_response.upload_image_200.status_code}"
+  response_parameters = { "method.response.header.Access-Control-Allow-Origin" = "'*'" }
   depends_on = ["aws_api_gateway_integration.upload_image_api_gateway_integration"]
 }
-
+resource "aws_api_gateway_integration_response" "upload_image__options" {
+  rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
+  resource_id = "${aws_api_gateway_resource.upload_image_api_gateway_resource.id}"
+  http_method = "${aws_api_gateway_method.upload_image__options.http_method}"
+  status_code = "${aws_api_gateway_method_response.upload_image__options_200.status_code}"
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = "'Content-Type'",
+    "method.response.header.Access-Control-Allow-Methods" = "'POST,OPTIONS,GET'",
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+  }
+  depends_on = ["aws_api_gateway_integration.upload_image__options"]
+}
 resource "aws_api_gateway_integration_response" "get_upload_url_api_gateway_integration_response" {
   rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
   resource_id = "${aws_api_gateway_resource.get_upload_url_api_gateway_resource.id}"
   http_method = "${aws_api_gateway_method.get_upload_url_api_gateway_method.http_method}"
   status_code = "${aws_api_gateway_method_response.get_upload_url_200.status_code}"
+  response_parameters = { "method.response.header.Access-Control-Allow-Origin" = "'*'" }
   depends_on = ["aws_api_gateway_integration.get_upload_url_api_gateway_integration"]
 }
 
+# API GATEWAY :: RESPONSE METHODS
+resource "aws_api_gateway_method_response" "upload_image_200" {
+  rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
+  resource_id = "${aws_api_gateway_resource.upload_image_api_gateway_resource.id}"
+  http_method = "${aws_api_gateway_method.upload_image_api_gateway_method.http_method}"
+  status_code = "200"
+  response_models = { "application/json" = "Empty" }
+  response_parameters = { "method.response.header.Access-Control-Allow-Origin" = true }
+}
+resource "aws_api_gateway_method_response" "upload_image__options_200" {
+  rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
+  resource_id = "${aws_api_gateway_resource.upload_image_api_gateway_resource.id}"
+  http_method = "${aws_api_gateway_method.upload_image__options.http_method}"
+  status_code = "200"
+  response_models = { "application/json" = "Empty" }
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true,
+    "method.response.header.Access-Control-Allow-Methods" = true,
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
+}
+resource "aws_api_gateway_method_response" "get_upload_url_200" {
+  rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
+  resource_id = "${aws_api_gateway_resource.get_upload_url_api_gateway_resource.id}"
+  http_method = "${aws_api_gateway_method.get_upload_url_api_gateway_method.http_method}"
+  status_code = "200"
+  response_models = { "application/json" = "Empty" }
+  response_parameters = { "method.response.header.Access-Control-Allow-Origin" = true }
+}
+
+# API GATEWAY :: DEPLOYMENT STAGES
 resource "aws_api_gateway_deployment" "production" {
   rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
   stage_name = "prod"
