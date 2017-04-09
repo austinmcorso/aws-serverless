@@ -1,3 +1,5 @@
 import { combineEpics } from 'redux-observable';
 
-export default combineEpics();
+import imageUpload from 'epics/image_upload';
+
+export default combineEpics(imageUpload);

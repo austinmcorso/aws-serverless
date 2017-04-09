@@ -23,10 +23,10 @@ class App extends React.Component {
     return (
       <div>
         <h1>Mipmapper</h1>
-        {this.props.errors.length && <h5>{this.props.errors[0]}</h5>}
+        {this.props.errors.length && <h5>{this.props.errors.message}</h5>}
         <Image>
           <ImageUpload onDrop={this.onDrop} />
-          <img src={this.props.images.length ? this.props.images[0].preview : ''} />
+          <img src={this.props.images.orig ? this.props.images.orig.preview : ''} />
         </Image>
         <Image>
           <img src='' />
