@@ -68,6 +68,15 @@ resource "aws_lambda_function" "upload_image_lambda_function" {
   source_code_hash = "${base64sha256(file("./mipmapper.zip"))}"
 }
 
+resource "aws_lambda_function" "get_upload_url_lambda_function" {
+  filename = "mipmapper.zip"
+  function_name = "get_upload_url"
+  role = "${aws_iam_role.lambda_role.arn}"
+  handler = "index.getUploadUrl"
+  runtime = "nodejs4.3"
+  source_code_hash = "${base64sha256(file("./mipmapper.zip"))}"
+}
+
 resource "aws_lambda_function" "process_image_lambda_function" {
   filename = "mipmapper.zip"
   function_name = "process_image"
@@ -100,9 +109,22 @@ resource "aws_api_gateway_resource" "upload_image_api_gateway_resource" {
   path_part = "images"
 }
 
+resource "aws_api_gateway_resource" "get_upload_url_api_gateway_resource" {
+  rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
+  parent_id = "${aws_api_gateway_resource.upload_image_api_gateway_resource.id}"
+  path_part = "v2"
+}
+
 resource "aws_api_gateway_method" "upload_image_api_gateway_method" {
   rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
   resource_id = "${aws_api_gateway_resource.upload_image_api_gateway_resource.id}"
+  http_method = "POST"
+  authorization = "NONE"
+}
+
+resource "aws_api_gateway_method" "get_upload_url_api_gateway_method" {
+  rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
+  resource_id = "${aws_api_gateway_resource.get_upload_url_api_gateway_resource.id}"
   http_method = "POST"
   authorization = "NONE"
 }
@@ -139,24 +161,52 @@ EOF
  }
 }
 
-resource "aws_api_gateway_method_response" "200" {
+resource "aws_api_gateway_integration" "get_upload_url_api_gateway_integration" {
+  rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
+  resource_id = "${aws_api_gateway_resource.get_upload_url_api_gateway_resource.id}"
+  http_method = "${aws_api_gateway_method.upload_image_api_gateway_method.http_method}"
+  integration_http_method = "${aws_api_gateway_method.upload_image_api_gateway_method.http_method}"
+  type ="AWS"
+  uri = "arn:aws:apigateway:${var.aws_region}:lambda:path/2015-03-31/functions/${aws_lambda_function.get_upload_url_lambda_function.arn}/invocations"
+}
+
+resource "aws_api_gateway_method_response" "upload_image_200" {
   rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
   resource_id = "${aws_api_gateway_resource.upload_image_api_gateway_resource.id}"
   http_method = "${aws_api_gateway_method.upload_image_api_gateway_method.http_method}"
   status_code = "200"
 }
+
+resource "aws_api_gateway_method_response" "get_upload_url_200" {
+  rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
+  resource_id = "${aws_api_gateway_resource.get_upload_url_api_gateway_resource.id}"
+  http_method = "${aws_api_gateway_method.get_upload_url_api_gateway_method.http_method}"
+  status_code = "200"
+}
+
 resource "aws_api_gateway_integration_response" "upload_image_api_gateway_integration_response" {
   rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
   resource_id = "${aws_api_gateway_resource.upload_image_api_gateway_resource.id}"
   http_method = "${aws_api_gateway_method.upload_image_api_gateway_method.http_method}"
-  status_code = "${aws_api_gateway_method_response.200.status_code}"
+  status_code = "${aws_api_gateway_method_response.upload_image_200.status_code}"
   depends_on = ["aws_api_gateway_integration.upload_image_api_gateway_integration"]
+}
+
+resource "aws_api_gateway_integration_response" "get_upload_url_api_gateway_integration_response" {
+  rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
+  resource_id = "${aws_api_gateway_resource.get_upload_url_api_gateway_resource.id}"
+  http_method = "${aws_api_gateway_method.get_upload_url_api_gateway_method.http_method}"
+  status_code = "${aws_api_gateway_method_response.get_upload_url_200.status_code}"
+  depends_on = ["aws_api_gateway_integration.get_upload_url_api_gateway_integration"]
 }
 
 resource "aws_api_gateway_deployment" "production" {
   rest_api_id = "${aws_api_gateway_rest_api.mipmapper_api.id}"
   stage_name = "prod"
-  depends_on = ["aws_api_gateway_integration.upload_image_api_gateway_integration"]
+  depends_on = [
+    "aws_api_gateway_integration.upload_image_api_gateway_integration",
+    "aws_api_gateway_integration.get_upload_url_api_gateway_integration"
+  ]
 }
 
 # S3
@@ -175,12 +225,20 @@ resource "aws_lambda_permission" "allow_s3" {
     principal = "s3.amazonaws.com"
     source_arn = "${aws_s3_bucket.client.arn}"
 }
-resource "aws_lambda_permission" "apigw_lambda" {
+resource "aws_lambda_permission" "upload_image_apigw_lambda" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.upload_image_lambda_function.function_name}"
   principal     = "apigateway.amazonaws.com"
 }
+
+resource "aws_lambda_permission" "get_upload_url_apigw_lambda" {
+  statement_id  = "AllowExecutionFromAPIGateway"
+  action        = "lambda:InvokeFunction"
+  function_name = "${aws_lambda_function.get_upload_url_lambda_function.function_name}"
+  principal     = "apigateway.amazonaws.com"
+}
+
 resource "aws_s3_bucket_notification" "upload" {
     bucket = "${aws_s3_bucket.client.id}"
     lambda_function {
