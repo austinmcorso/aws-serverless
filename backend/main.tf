@@ -262,8 +262,12 @@ resource "aws_s3_bucket" "client" {
     bucket = "${var.aws_s3_bucket_name}"
     acl = "public-read"
 
+    cors_rule {
+      allowed_headers = ["*"]
+      allowed_methods = ["GET"]
+    }
     website {
-        index_document = "index.html"
+      index_document = "index.html"
     }
 }
 resource "aws_lambda_permission" "allow_s3" {

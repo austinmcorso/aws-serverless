@@ -18,17 +18,30 @@ class App extends React.Component {
   }
 
   render() {
+    const { images } = this.props;
+    const style = images.orig
+      ? {
+        background: `url(${images.orig.preview})`,
+        height: images.orig.height,
+        width: images.orig.width,
+      }
+      : undefined;
+
     return (
       <div>
         <h1>Mipmapper</h1>
         {this.props.errors.length && <h5>{this.props.errors.message}</h5>}
         <Image>
-          <ImageUpload onDrop={this.onDrop} />
-          <img src={this.props.images.orig || ''} />
+          <ImageUpload
+            onDrop={this.onDrop}
+            style={style}
+          />
         </Image>
-        <Image>
-          <img src='' />
-        </Image>
+        {images.sm &&
+          <Image>
+            <img src={images.sm.url} />
+          </Image>
+        }
       </div>
     );
   }

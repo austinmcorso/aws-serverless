@@ -4,10 +4,16 @@ const defaultState = {};
 
 export default function images(state = defaultState, action) {
   switch (action.type) {
-    case ActionTypes.ADD_IMAGE:
-      return Object.assign({}, state, { orig: action.image });
     case ActionTypes.ADD_IMAGE_SUCCESS:
-      return Object.assign({}, state, { id: action.id });
+      return Object.assign({}, state, { orig: {
+        preview: action.image.preview,
+        width: action.width,
+        height: action.height,
+      } });
+    case ActionTypes.UPLOAD_IMAGE_SUCCESS:
+      return Object.assign({}, state, { sm: {
+        url: action.url,
+      } });
     default:
       return state;
   }

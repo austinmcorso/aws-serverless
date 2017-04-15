@@ -4,13 +4,15 @@ const addImage = {
   addImage: (image) => {
     return {
       type: ActionTypes.ADD_IMAGE,
-      image: image.preview,
+      image,
     };
   },
-  addImageSuccess: (id) => {
+  addImageSuccess: ({ image, height, width }) => {
     return {
       type: ActionTypes.ADD_IMAGE_SUCCESS,
-      id,
+      image,
+      height,
+      width,
     };
   },
   addImageFail: (error) => {
@@ -22,8 +24,31 @@ const addImage = {
   },
 };
 
+const uploadImage = {
+  uploadImage: (image) => {
+    return {
+      type: ActionTypes.UPLOAD_IMAGE,
+      image,
+    };
+  },
+  uploadImageSuccess: (url) => {
+    return {
+      type: ActionTypes.UPLOAD_IMAGE_SUCCESS,
+      url,
+    };
+  },
+  uploadImageFail: (error) => {
+    return {
+      type: ActionTypes.UPLOAD_IMAGE_FAIL,
+      message: error.message,
+      status: error.status,
+    };
+  },
+};
+
 export default {
   ...addImage,
+  ...uploadImage,
   displayError: (message) => {
     return {
       type: ActionTypes.DISPLAY_ERROR,
