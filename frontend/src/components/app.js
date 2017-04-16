@@ -24,24 +24,28 @@ class App extends React.Component {
         background: `url(${images.orig.preview})`,
         height: images.orig.height,
         width: images.orig.width,
+        fontSize: 0,
       }
-      : undefined;
+      : {};
 
     return (
       <div>
-        <h1>Mipmapper</h1>
+        <h1>Mipmapper - Image Resizer</h1>
+        <h5>Brought to you by lambda - <a href='https://github.com/austinmcorso/aws-serverless'>
+          https://github.com/austinmcorso/aws-serverless
+        </a></h5>
         {this.props.errors.length && <h5>{this.props.errors.message}</h5>}
-        <Image>
-          <ImageUpload
-            onDrop={this.onDrop}
-            style={style}
-          />
-        </Image>
-        {images.sm &&
-          <Image>
-            <img src={images.sm.url} />
+        <div className={'images-container'}>
+          <Image className={'upload'}>
+            <ImageUpload
+              onDrop={this.onDrop}
+              style={style}
+            />
           </Image>
-        }
+          <Image className={'resized'}>
+            <img src={images.sm ? images.sm.url : ''} />
+          </Image>
+        </div>
       </div>
     );
   }

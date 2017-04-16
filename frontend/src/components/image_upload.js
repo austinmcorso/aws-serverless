@@ -9,6 +9,8 @@ export default function ImageUpload({ onDrop, style }) {
       maxSize={1*1024*1024}
       accept={'image/*'}
       style={style}
-    />
+    >
+      Drag an image or click to upload
+    </Dropzone>
   );
 }

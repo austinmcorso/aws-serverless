@@ -1,8 +1,8 @@
 import React from 'react';
 
-export default function Image({ children }) {
+export default function Image({ children, className }) {
   return (
-    <div>
+    <div className={`image-container ${className}`}>
       {children}
     </div>
   );
