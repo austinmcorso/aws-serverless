@@ -30,16 +30,13 @@ export default function imageUpload(action$) {
       .retryWhen(errors => {
         return errors
           .scan((retryCount, err) => {
-            console.log('retryCount', retryCount);
-            console.log(err);
-            if (err.status === 404 && retryCount < 3) return retryCount+1;
+            if (err.status === 404 && retryCount < 3) return retryCount + 1;
             throw err;
           }, 0);
       })
     )
     .map(res => actions.uploadImageSuccess(res.request.url))
     .catch(err => {
-      console.log('err');
-      actions.uploadImageFail(err);
+      return Observable.of(actions.uploadImageFail(err));
     });
 }

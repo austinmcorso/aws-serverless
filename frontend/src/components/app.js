@@ -3,8 +3,8 @@ import { connect } from 'react-redux';
 
 import ImageUpload from 'components/image_upload';
 import Image from 'components/image';
-
 import actions from 'actions';
+import '../index.scss';
 
 class App extends React.Component {
   constructor(props) {

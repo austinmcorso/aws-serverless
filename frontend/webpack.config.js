@@ -8,26 +8,30 @@ module.exports = {
     publicPath: '/static/'
   },
   module: {
-    loaders: [
+    rules: [
       {
         test: /\.(js|jsx)$/,
         exclude: /node_modules/,
-        loader: 'babel',
+        loader: 'babel-loader',
         query: {
           presets: ['es2015', 'react', 'stage-2'],
           babelrc: false
         }
+      },
+      {
+        test: /\.scss$/,
+        loaders: [ 'style-loader', 'css-loader?sourceMap', 'sass-loader?sourceMap' ]
       }
     ]
   },
   resolve: {
-    root: path.resolve(__dirname, 'src'),
+    modules: [path.resolve(__dirname, 'src'), 'node_modules'],
     alias: {
-      components: 'components',
-      actions: 'actions',
-      epics: 'epics',
-      reducers: 'reducers'
+      components: path.resolve(__dirname, 'src/components'),
+      actions: path.resolve(__dirname, 'src/actions'),
+      epics: path.resolve(__dirname, 'src/epics'),
+      reducers: path.resolve(__dirname, 'src/reducers')
     },
-    extensions: ['', '.js', '.jsx'],
+    extensions: ['.js', '.jsx'],
   }
 };
