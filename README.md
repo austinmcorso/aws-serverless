@@ -1,5 +1,8 @@
 # Serverless tools comparison
 
+## Demo
+[https://s3.amazonaws.com/mipmapper/dist/index.html](https://s3.amazonaws.com/mipmapper/dist/index.html)
+
 ## Why?
 
 Forgoing a server in favor of ephemeral handlers is an increasingly popular option
