@@ -1,4 +1,5 @@
 var path = require('path');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
   entry: './src/index.js',
@@ -33,5 +34,9 @@ module.exports = {
       reducers: path.resolve(__dirname, 'src/reducers')
     },
     extensions: ['.js', '.jsx'],
-  }
+  },
+  plugins: [new HtmlWebpackPlugin({
+    template: './src/index.template.html',
+    inject: false,
+  })]
 };
