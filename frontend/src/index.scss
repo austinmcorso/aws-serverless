@@ -1,16 +1,24 @@
+@import url('https://fonts.googleapis.com/css?family=Libre+Franklin');
+
+body {
+  font-family: 'Libre Franklin', sans-serif;
+  background: #66B9BF;
+}
 .app {
   max-width: 800px;
   margin: 0 auto;
 }
 .images-container {
-  border: 1px solid #AAA;
-  border-radius: 5px;
-  padding: 10px;
+  border: 1px solid #BBB;
+  padding: 12px 6px;
+  border-radius: 6px;
+  background: #FFF;
 }
 .image-container {
   border: 1px dashed #AAA;
   border-radius: 5px;
   margin: 10px;
+  background: #DDD;
 }
 .image-container {
   min-height: 200px;
