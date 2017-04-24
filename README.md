@@ -35,7 +35,7 @@ Initially, we are starting with a simple progressive image service:
 - Users can upload an image to the service
 - On upload, the service creates ~multiple~ version(s) of the image at different compression level(s)
 - The user receives a preview and link to the image
-- n "In-progress" indicator.
+- "In-progress" indicator.
 
 ## What we're building
 
