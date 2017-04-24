@@ -7,12 +7,11 @@
 
 Forgoing a server in favor of ephemeral handlers is an increasingly popular option
 when developing web services. These handlers, provided through services like AWS Lambda,
-are created on-demand from one of many triggers, and are destroyed once the handler finishes.
+are created on-demand from one of many triggers, and are destroyed shortly after the handler finishes and a cooldown has passed.
 Because of their transient nature, this makes them attractive in terms of cost and scalability.
 
 Coupled with other cloud services, such as DynamoDB or RDS for storage, and API Gateway as
-an HTTP frontend, one can compose an entire architecture in which no virtual or physical servers
-are necessary. Clearly for some projects, vendor lock-in and long-term support
+an HTTP router, one can compose an entire architecture in which no virtual or physical server support is necessary. Clearly for some projects, vendor lock-in and long-term support
 can be show-stoppers; however, in many cases, it is preferable to cede control to a
 third party in exchange for decreased ops and infrastructure costs.
 
@@ -34,11 +33,9 @@ made when making decisions that affect how your application logic is developed a
 Initially, we are starting with a simple progressive image service:
 
 - Users can upload an image to the service
-- On upload, the service creates multiple versions of the image at different compression levels
-- The user receives a link to a page with links to the different versions of the image,
-and an example progressive loading experience.
-- If the user visits the page before all of the images are generated, they should
-see an "In-progress" indicator.
+- On upload, the service creates ~multiple~ version(s) of the image at different compression level(s)
+- The user receives a preview and link to the image
+- n "In-progress" indicator.
 
 ## What we're building
 
@@ -46,12 +43,16 @@ We want to demonstrate best practices in two areas:
 
 - Handler (Lambda) development
 - Deployment of backing infrastructure
+- BONUS: Check out those nifty Redux Observables for asynchronicity
 
 In order to do this, we will need the following components:
 
+V1.
 - A lambda for uploading the original image, placing it in S3, and returning an id
-- An SQS queue for holding the resizing jobs after the original upload
 - A lambda for resizing an image
 - A static page in S3 for viewing image details, given an id
+
+V2.
+- A lambda for generating signed urls to S3 w/o cost of sending image itself through the Lambda
 
 Using multiple components in the AWS ecosystem should provide us with opportunity to explore the differences in using Terraform or Cloudformation against specialized frameworks like Serverless or Apex. Having multiple Lambdas should also expose the variation and testing challenges when integrating with AWS services.
