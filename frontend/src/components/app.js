@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import ImageUpload from 'components/image_upload';
 import Image from 'components/image';
+import Loader from 'components/loader';
 import actions from 'actions';
 import '../index.scss';
 
@@ -19,6 +20,7 @@ class App extends React.Component {
 
   render() {
     const { images } = this.props;
+    const previewUrl = images.sm ? images.sm.url : '';
     const style = images.orig
       ? {
         background: `url(${images.orig.preview})`,
@@ -43,7 +45,11 @@ class App extends React.Component {
             />
           </Image>
           <Image className={'resized'}>
-            <img src={images.sm ? images.sm.url : ''} />
+            {
+              images.isLoading
+                ? <Loader />
+                : <a href={previewUrl}><img src={previewUrl} /></a>
+            }
           </Image>
         </div>
       </div>

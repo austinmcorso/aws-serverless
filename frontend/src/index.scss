@@ -19,14 +19,17 @@ body {
   border-radius: 5px;
   margin: 10px;
   background: #DDD;
-}
-.image-container {
+  overflow: hidden;
   min-height: 200px;
   min-width: 200px;
   padding: 5px;
   display: flex;
   justify-content: center;
   align-items: center;
+
+  svg {
+    height: 100px;
+  }
 }
 .image-container.upload > div {
   cursor: pointer;

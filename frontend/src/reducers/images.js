@@ -1,6 +1,8 @@
 import * as ActionTypes from '../action_types';
 
-const defaultState = {};
+const defaultState = {
+  isLoading: false,
+};
 
 export default function images(state = defaultState, action) {
   switch (action.type) {
@@ -11,12 +13,20 @@ export default function images(state = defaultState, action) {
           width: action.width,
           height: action.height,
         },
+        isLoading: true,
         sm: null,
       });
     case ActionTypes.UPLOAD_IMAGE_SUCCESS:
-      return Object.assign({}, state, { sm: {
-        url: action.url,
-      } });
+      return Object.assign({}, state, {
+        sm: {
+          url: action.url,
+        },
+        isLoading: false,
+      });
+    case ActionTypes.UPLOAD_IMAGE_FAIL:
+      return Object.assign({}, state, {
+        isLoading: false,
+      });
     default:
       return state;
   }
