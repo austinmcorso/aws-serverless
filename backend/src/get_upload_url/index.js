@@ -43,6 +43,7 @@ module.exports = (event, context, done) => {
   const params = {
     Bucket: S3_BUCKET_NAME,
     Key: filename,
+    ContentLength: 3000,
   };
 
   console.log('params building done');
