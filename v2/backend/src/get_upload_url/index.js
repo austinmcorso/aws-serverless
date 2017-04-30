@@ -2,6 +2,11 @@ const path = require('path');
 const AWS = require('aws-sdk');
 const uuid = require('uuid/v4');
 
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Credentials': true,
+};
+
 const S3_BUCKET_NAME = process.env.MIPMAPPER_S3_BUCKET || 'mipmapper';
 const S3_FOLDER_PREFIX = 'images';
 const ALLOWED_IMAGE_TYPES = ['jpg', 'png'];
@@ -35,6 +40,7 @@ module.exports = (event, context, done) => {
     done(
       null,
       {
+        headers: Object.assign({}, CORS_HEADERS),
         statusCode: 400,
         body: JSON.stringify({ errors }),
       });
@@ -53,6 +59,7 @@ module.exports = (event, context, done) => {
   s3.getSignedUrl('putObject', params, (err, url) => {
     console.log(err);
     done(err, {
+      headers: Object.assign({}, CORS_HEADERS),
       statusCode: 200,
       body: JSON.stringify({ id, url }),
     });

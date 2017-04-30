@@ -28,6 +28,7 @@ functions:
       - http:
           path: images
           method: POST
+          cors: true
 
 resources:
   Resources:
@@ -35,6 +36,15 @@ resources:
       Type: AWS::S3::Bucket
       Properties:
         BucketName: ${self:provider.stage}-mipmapper-image-storage
+        CorsConfiguration:
+          CorsRules:
+            - AllowedOrigins:
+                - "*"
+              AllowedHeaders:
+                - "*"
+              AllowedMethods:
+                - GET
+                - PUT
     imageStorageReadonlyPolicy:
       Type: AWS::S3::BucketPolicy
       Properties:

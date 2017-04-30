@@ -102,7 +102,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/mipmapper/dev/1493581932063-2017-04-30T19:52:12.063Z/mipmapper.zip"
+          "S3Key": "serverless/mipmapper/dev/1493590694315-2017-04-30T22:18:14.315Z/mipmapper.zip"
         },
         "FunctionName": "dev-get_upload_url",
         "Handler": "handler.getUploadUrl",
@@ -127,14 +127,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "GetUploadUrlLambdaVersionfoZvBAtxkLKmCA6mXH4C6weY8ELtZcB0Pd2jBdIk": {
+    "GetUploadUrlLambdaVersionhg9k9Uyu2cWfTZgjFXqBYfZFNHhWoIeDvm2KgH97t8": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetUploadUrlLambdaFunction"
         },
-        "CodeSha256": "foZ+vBA+txkLKmCA6mXH4C6+weY8ELtZcB0Pd2jBdIk=",
+        "CodeSha256": "hg9k9Uyu2cWfTZgjFXq/BYfZFNHhWoIeDvm2KgH97t8=",
         "Description": "Gets a presigned URL for uploading an image"
       }
     },
@@ -154,6 +154,52 @@
           ]
         },
         "PathPart": "images",
+        "RestApiId": {
+          "Ref": "ApiGatewayRestApi"
+        }
+      }
+    },
+    "ApiGatewayMethodImagesOptions": {
+      "Type": "AWS::ApiGateway::Method",
+      "Properties": {
+        "AuthorizationType": "NONE",
+        "HttpMethod": "OPTIONS",
+        "MethodResponses": [
+          {
+            "StatusCode": "200",
+            "ResponseParameters": {
+              "method.response.header.Access-Control-Allow-Origin": true,
+              "method.response.header.Access-Control-Allow-Headers": true,
+              "method.response.header.Access-Control-Allow-Methods": true,
+              "method.response.header.Access-Control-Allow-Credentials": true
+            },
+            "ResponseModels": {}
+          }
+        ],
+        "RequestParameters": {},
+        "Integration": {
+          "Type": "MOCK",
+          "RequestTemplates": {
+            "application/json": "{statusCode:200}"
+          },
+          "IntegrationResponses": [
+            {
+              "StatusCode": "200",
+              "ResponseParameters": {
+                "method.response.header.Access-Control-Allow-Origin": "'*'",
+                "method.response.header.Access-Control-Allow-Headers": "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+                "method.response.header.Access-Control-Allow-Methods": "'OPTIONS,POST'",
+                "method.response.header.Access-Control-Allow-Credentials": "'false'"
+              },
+              "ResponseTemplates": {
+                "application/json": ""
+              }
+            }
+          ]
+        },
+        "ResourceId": {
+          "Ref": "ApiGatewayResourceImages"
+        },
         "RestApiId": {
           "Ref": "ApiGatewayRestApi"
         }
@@ -197,7 +243,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1493581932109": {
+    "ApiGatewayDeployment1493590694359": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -245,7 +291,23 @@
     "imageStorage": {
       "Type": "AWS::S3::Bucket",
       "Properties": {
-        "BucketName": "dev-mipmapper-image-storage"
+        "BucketName": "dev-mipmapper-image-storage",
+        "CorsConfiguration": {
+          "CorsRules": [
+            {
+              "AllowedOrigins": [
+                "*"
+              ],
+              "AllowedHeaders": [
+                "*"
+              ],
+              "AllowedMethods": [
+                "GET",
+                "PUT"
+              ]
+            }
+          ]
+        }
       }
     },
     "imageStorageReadonlyPolicy": {
@@ -265,7 +327,7 @@
     "GetUploadUrlLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetUploadUrlLambdaVersionfoZvBAtxkLKmCA6mXH4C6weY8ELtZcB0Pd2jBdIk"
+        "Ref": "GetUploadUrlLambdaVersionhg9k9Uyu2cWfTZgjFXqBYfZFNHhWoIeDvm2KgH97t8"
       }
     },
     "ServiceEndpoint": {

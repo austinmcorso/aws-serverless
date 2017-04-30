@@ -8,19 +8,30 @@ import config from '../config';
 export default function imageUpload(action$) {
   return action$.ofType(ActionTypes.ADD_IMAGE_SUCCESS)
     .map(action => action.image)
-    .switchMap(image =>
-      ajax({
+    .switchMap(image => {
+      console.log(image.type);
+      return ajax({
         method: 'POST',
         url: `${config.apiUrl}/images`,
-        body: image,
+        body: {
+          imageType: image.type.split('/')[1],
+          fileSizeBytes: 1000,
+        },
         headers: {
-          'Content-Type': 'image/png',
+          'Content-Type': 'application/json',
         },
         responseType: 'json',
         crossDomain: true,
-      })
-    )
-    .map(res => res.response.id)
+      }).map(({ response }) => ({ image, response }))
+    })
+    .switchMap(({ image, response }) => {
+      return ajax({
+        method: 'PUT',
+        url: response.url,
+        crossDomain: true,
+        body: image
+      }).map(() => response.id)
+    })
     .switchMap(id =>
       ajax({
         method: 'GET',

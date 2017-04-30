@@ -2,6 +2,7 @@ var path = require('path');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
+  devtool: 'eval-sourcemaps',
   entry: './src/index.js',
   output: {
     path: path.join(__dirname, 'dist'),
