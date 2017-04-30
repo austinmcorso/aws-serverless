@@ -11,6 +11,8 @@ function s3Stub() {
   };
 }
 
+const createBody = (data) => ({ body: JSON.stringify(data) });
+
 const fakeUuid = '123';
 
 describe('Upload Image', () => {
@@ -23,23 +25,25 @@ describe('Upload Image', () => {
   });
 
   it('should upload image', (done) => {
-    const event = { imageType: 'png', fileSizeBytes: 3 * 1024 * 1024 };
+    const event = createBody({ imageType: 'png', fileSizeBytes: 3 * 1024 * 1024 });
 
     getUploadUrl(event, {}, (err, response) => {
       assert.equal(err, null);
-      assert.deepEqual(response, {
+      assert.equal(200, response.statusCode);
+      assert.deepEqual(response.body, JSON.stringify({
         id: fakeUuid,
         url: `https://example.com/mipmapper/images/orig/${fakeUuid}.png`,
-      });
+      }));
       done();
     });
   });
 
   it('fails when image type is invalid', (done) => {
-    const event = { imageType: 'bmp', fileSizeBytes: 3 * 1024 * 1024 };
+    const event = createBody({ imageType: 'bmp', fileSizeBytes: 3 * 1024 * 1024 });
 
-    getUploadUrl(event, {}, (err) => {
-      assert.deepEqual(err.message, '[BadRequest] Validation errors: imageType must be png or jpg');
+    getUploadUrl(event, {}, (err, result) => {
+      assert.equal(400, result.statusCode);
+      assert.deepEqual(result.body, JSON.stringify({ errors: ['imageType must be png or jpg'] }));
       done();
     });
   });
@@ -51,11 +55,11 @@ describe('Upload Image', () => {
     ['fails when fileSizeBytes is greater than max allowed', 6 * 1024 * 1024, 'fileSizeBytes cannot exceed 5MB'],
   ].forEach(([testCase, value, expectedError]) => {
     it(testCase, (done) => {
-      const event = { imageType: 'jpg', fileSizeBytes: value };
+      const event = createBody({ imageType: 'jpg', fileSizeBytes: value });
 
-      getUploadUrl(event, {}, (err) => {
-        assert.notEqual(null, err);
-        assert.equal(err.message, `[BadRequest] Validation errors: ${expectedError}`);
+      getUploadUrl(event, {}, (err, result) => {
+        assert.equal(400, result.statusCode);
+        assert.deepEqual(result.body, JSON.stringify({ errors: [expectedError] }));
         done();
       });
     });

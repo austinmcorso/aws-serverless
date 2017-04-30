@@ -29,27 +29,32 @@ function getValidationErrors(event) {
 }
 
 module.exports = (event, context, done) => {
-  console.log(`Event: ${event}`);
-  const errors = getValidationErrors(event);
+  const body = JSON.parse(event.body);
+  const errors = getValidationErrors(body);
   if (errors.length > 0) {
-    done(new Error(`[BadRequest] Validation errors: ${errors.join(',')}`));
+    done(
+      null,
+      {
+        statusCode: 400,
+        body: JSON.stringify({ errors }),
+      });
     return;
   }
 
-  console.log('validation done');
-
   const id = uuid();
-  const filename = `${path.join(S3_FOLDER_PREFIX, 'orig', id)}.${event.imageType}`;
+  const filename = `${path.join(S3_FOLDER_PREFIX, 'orig', id)}.${body.imageType}`;
   const params = {
     Bucket: S3_BUCKET_NAME,
     Key: filename,
-    ContentLength: 3000,
   };
 
   console.log('params building done');
   const s3 = new AWS.S3();
   s3.getSignedUrl('putObject', params, (err, url) => {
-    console.log('signed url done');
-    done(err, { id, url });
+    console.log(err);
+    done(err, {
+      statusCode: 200,
+      body: JSON.stringify({ id, url }),
+    });
   });
 };

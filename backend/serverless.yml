@@ -47,10 +47,7 @@ iamRoleStatements:
 
 # you can add packaging information here
 package:
-  include:
-    - dist/**
-#  exclude:
-#    - exclude-me.js
+  artifact: mipmapper.zip
 
 functions:
   getUploadUrl:

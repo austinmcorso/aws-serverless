@@ -92,7 +92,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/mipmapper/dev/1493573418411-2017-04-30T17:30:18.411Z/mipmapper.zip"
+          "S3Key": "serverless/mipmapper/dev/1493577563766-2017-04-30T18:39:23.766Z/mipmapper.zip"
         },
         "FunctionName": "dev-get_upload_url",
         "Handler": "handler.getUploadUrl",
@@ -112,14 +112,14 @@
         "IamRoleLambdaExecution"
       ]
     },
-    "GetUploadUrlLambdaVersionPE9IiH45ko5rrmS9mYBOQopVs5VrsGXlPMUcgBN4Qo": {
+    "GetUploadUrlLambdaVersiondYPeDONXHHk92P3phKHP1k70Duinu4A5rolzCqkIZ8": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetUploadUrlLambdaFunction"
         },
-        "CodeSha256": "PE9IiH45ko5rrmS9mYBOQopVs5VrsGXlPMUcgB+N4Qo=",
+        "CodeSha256": "dYPeDONXHHk92P3phKHP1k70Duin/u4A5rolzCqkIZ8=",
         "Description": "Gets a presigned URL for uploading an image"
       }
     },
@@ -182,7 +182,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1493573418524": {
+    "ApiGatewayDeployment1493577563808": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -237,7 +237,7 @@
     "GetUploadUrlLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetUploadUrlLambdaVersionPE9IiH45ko5rrmS9mYBOQopVs5VrsGXlPMUcgBN4Qo"
+        "Ref": "GetUploadUrlLambdaVersiondYPeDONXHHk92P3phKHP1k70Duinu4A5rolzCqkIZ8"
       }
     },
     "ServiceEndpoint": {
