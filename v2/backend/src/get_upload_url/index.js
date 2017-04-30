@@ -2,7 +2,7 @@ const path = require('path');
 const AWS = require('aws-sdk');
 const uuid = require('uuid/v4');
 
-const S3_BUCKET_NAME = 'mipmapper';
+const S3_BUCKET_NAME = process.env.MIPMAPPER_S3_BUCKET || 'mipmapper';
 const S3_FOLDER_PREFIX = 'images';
 const ALLOWED_IMAGE_TYPES = ['jpg', 'png'];
 const MAX_FILE_SIZE_BYTES = 5 * 1024 * 1024;

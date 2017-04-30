@@ -66,6 +66,16 @@
                       "Fn::Sub": "arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/dev-get_upload_url:*:*"
                     }
                   ]
+                },
+                {
+                  "Effect": "Allow",
+                  "Action": [
+                    "s3:PutObject",
+                    "s3:PutObjectAcl",
+                    "s3:ListBucket",
+                    "s3:GetObject"
+                  ],
+                  "Resource": "arn:aws:s3:::dev-mipmapper-image-storage/*"
                 }
               ]
             }
@@ -92,7 +102,7 @@
           "S3Bucket": {
             "Ref": "ServerlessDeploymentBucket"
           },
-          "S3Key": "serverless/mipmapper/dev/1493577563766-2017-04-30T18:39:23.766Z/mipmapper.zip"
+          "S3Key": "serverless/mipmapper/dev/1493580454221-2017-04-30T19:27:34.221Z/mipmapper.zip"
         },
         "FunctionName": "dev-get_upload_url",
         "Handler": "handler.getUploadUrl",
@@ -105,21 +115,26 @@
         },
         "Runtime": "nodejs6.10",
         "Timeout": 10,
-        "Description": "Gets a presigned URL for uploading an image"
+        "Description": "Gets a presigned URL for uploading an image",
+        "Environment": {
+          "Variables": {
+            "MIPMAPPER_S3_BUCKET": "dev-mipmapper-image-storage"
+          }
+        }
       },
       "DependsOn": [
         "GetUploadUrlLogGroup",
         "IamRoleLambdaExecution"
       ]
     },
-    "GetUploadUrlLambdaVersiondYPeDONXHHk92P3phKHP1k70Duinu4A5rolzCqkIZ8": {
+    "GetUploadUrlLambdaVersionfoZvBAtxkLKmCA6mXH4C6weY8ELtZcB0Pd2jBdIk": {
       "Type": "AWS::Lambda::Version",
       "DeletionPolicy": "Retain",
       "Properties": {
         "FunctionName": {
           "Ref": "GetUploadUrlLambdaFunction"
         },
-        "CodeSha256": "dYPeDONXHHk92P3phKHP1k70Duin/u4A5rolzCqkIZ8=",
+        "CodeSha256": "foZ+vBA+txkLKmCA6mXH4C6+weY8ELtZcB0Pd2jBdIk=",
         "Description": "Gets a presigned URL for uploading an image"
       }
     },
@@ -182,7 +197,7 @@
         "MethodResponses": []
       }
     },
-    "ApiGatewayDeployment1493577563808": {
+    "ApiGatewayDeployment1493580454267": {
       "Type": "AWS::ApiGateway::Deployment",
       "Properties": {
         "RestApiId": {
@@ -226,6 +241,12 @@
           ]
         }
       }
+    },
+    "imageStorage": {
+      "Type": "AWS::S3::Bucket",
+      "Properties": {
+        "BucketName": "dev-mipmapper-image-storage"
+      }
     }
   },
   "Outputs": {
@@ -237,7 +258,7 @@
     "GetUploadUrlLambdaFunctionQualifiedArn": {
       "Description": "Current Lambda function version",
       "Value": {
-        "Ref": "GetUploadUrlLambdaVersiondYPeDONXHHk92P3phKHP1k70Duinu4A5rolzCqkIZ8"
+        "Ref": "GetUploadUrlLambdaVersionfoZvBAtxkLKmCA6mXH4C6weY8ELtZcB0Pd2jBdIk"
       }
     },
     "ServiceEndpoint": {
