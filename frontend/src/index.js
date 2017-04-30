@@ -11,7 +11,7 @@ import 'rxjs';
 import React from 'react';
 import ReactDOM from 'react-dom';
 import { Provider } from 'react-redux';
-import { Router, Route, browserHistory, IndexRoute } from 'react-router';
+import { Router, Route, browserHistory } from 'react-router';
 import { syncHistoryWithStore } from 'react-router-redux';
 import configureStore from './configure_store';
 import App from 'components/app';
@@ -25,7 +25,7 @@ const history = syncHistoryWithStore(
 ReactDOM.render(
   <Provider store={store}>
     <Router history={history}>
-      <Route path='/' component={App} />
+      <Route path="*" component={App} />
     </Router>
   </Provider>,
   document.querySelector('.app')

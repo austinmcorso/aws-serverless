@@ -30,9 +30,10 @@ export default function imageUpload(action$) {
       .retryWhen(errors => {
         return errors
           .scan((retryCount, err) => {
-            if (err.status === 404 && retryCount < 3) return retryCount + 1;
+            if (err.status === 404 && retryCount < config.maxLoadingSeconds) return retryCount + 1;
             throw err;
-          }, 0);
+          }, 0)
+          .delay(1000);
       })
     )
     .map(res => actions.uploadImageSuccess(res.request.url))
