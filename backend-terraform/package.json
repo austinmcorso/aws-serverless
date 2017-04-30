@@ -1,0 +1,34 @@
+{
+  "dependencies": {
+    "async": "^2.1.4",
+    "aws-sdk": "^2.12.0",
+    "gm": "^1.23.0",
+    "uuid": "^3.0.1"
+  },
+  "name": "aws-serverless",
+  "description": "## Why?",
+  "version": "0.0.1",
+  "main": "index.js",
+  "devDependencies": {
+    "eslint": "^3.15.0",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.9.0",
+    "mocha": "^3.2.0",
+    "proxyquire": "^1.7.11",
+    "sinon": "^1.17.7"
+  },
+  "scripts": {
+    "build": "yarn test && yarn install && ./scripts/build.sh",
+    "test": "mocha --recursive"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/austinmcorso/aws-serverless.git"
+  },
+  "bugs": {
+    "url": "https://github.com/austinmcorso/aws-serverless/issues"
+  },
+  "homepage": "https://github.com/austinmcorso/aws-serverless#readme"
+}
